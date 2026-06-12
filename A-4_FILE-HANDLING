@@ -1,0 +1,184 @@
+import csv
+import os
+
+FILENAME = "records.csv"
+
+
+# Load records from file
+def load_records():
+    records = []
+
+    try:
+        if not os.path.exists(FILENAME):
+            with open(FILENAME, "w", newline="") as file:
+                writer = csv.writer(file)
+                writer.writerow(["ID", "Name", "Age"])
+            return records
+
+        with open(FILENAME, "r", newline="") as file:
+            reader = csv.reader(file)
+            next(reader, None)  # Skip header
+
+            for row in reader:
+                if len(row) == 3:
+                    records.append(row)
+
+    except Exception as e:
+        print("Error loading records:", e)
+
+    return records
+
+
+# Save records to file
+def save_records(records):
+    try:
+        with open(FILENAME, "w", newline="") as file:
+            writer = csv.writer(file)
+
+            writer.writerow(["ID", "Name", "Age"])
+
+            for record in records:
+                writer.writerow(record)
+
+    except Exception as e:
+        print("Error saving records:", e)
+
+
+# Display all records
+def display_records(records):
+    if not records:
+        print("\nNo records found.")
+        return
+
+    print("\nCurrent Records:")
+    print("-" * 35)
+
+    for index, record in enumerate(records):
+        print(
+            f"Index: {index} | ID: {record[0]} | Name: {record[1]} | Age: {record[2]}"
+        )
+
+
+# Add new record
+def add_record(records):
+    try:
+        record_id = input("Enter ID: ").strip()
+        name = input("Enter Name: ").strip()
+        age = input("Enter Age: ").strip()
+
+        records.append([record_id, name, age])
+
+        save_records(records)
+        print("Record added successfully!")
+
+    except Exception as e:
+        print("Error adding record:", e)
+
+
+# Update record
+def update_record(records):
+    if not records:
+        print("No records available.")
+        return
+
+    display_records(records)
+
+    try:
+        index = int(input("\nEnter index of record to update: "))
+
+        if 0 <= index < len(records):
+            print("Leave blank to keep current value.")
+
+            new_id = input(f"New ID ({records[index][0]}): ").strip()
+            new_name = input(f"New Name ({records[index][1]}): ").strip()
+            new_age = input(f"New Age ({records[index][2]}): ").strip()
+
+            if new_id:
+                records[index][0] = new_id
+
+            if new_name:
+                records[index][1] = new_name
+
+            if new_age:
+                records[index][2] = new_age
+
+            save_records(records)
+            print("Record updated successfully!")
+
+        else:
+            print("Invalid index.")
+
+    except ValueError:
+        print("Please enter a valid number.")
+    except Exception as e:
+        print("Error updating record:", e)
+
+
+# Delete record
+def delete_record(records):
+    if not records:
+        print("No records available.")
+        return
+
+    display_records(records)
+
+    try:
+        index = int(input("\nEnter index of record to delete: "))
+
+        if 0 <= index < len(records):
+            removed = records.pop(index)
+
+            save_records(records)
+            print(f"Record '{removed[1]}' deleted successfully!")
+
+        else:
+            print("Invalid index.")
+
+    except ValueError:
+        print("Please enter a valid number.")
+    except Exception as e:
+        print("Error deleting record:", e)
+
+
+# Main menu
+def main():
+    records = load_records()
+
+    print("=== Persistent Record System ===")
+
+    if records:
+        print("\nLoaded Records:")
+        display_records(records)
+
+    while True:
+        print("\n===== MENU =====")
+        print("1. Add Record")
+        print("2. View Records")
+        print("3. Update Record")
+        print("4. Delete Record")
+        print("5. Exit")
+
+        choice = input("Enter choice: ")
+
+        if choice == "1":
+            add_record(records)
+
+        elif choice == "2":
+            display_records(records)
+
+        elif choice == "3":
+            update_record(records)
+
+        elif choice == "4":
+            delete_record(records)
+
+        elif choice == "5":
+            print("Program closed.")
+            break
+
+        else:
+            print("Invalid choice. Try again.")
+
+
+if __name__ == "__main__":
+    main()
