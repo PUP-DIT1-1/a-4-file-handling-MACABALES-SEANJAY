@@ -1,0 +1,48 @@
+# Student Record Saver
+# Activity ID: PY-A4
+
+while True:
+    print("\n===== Student Record Menu =====")
+    print("1 - Add Student Record")
+    print("2 - View Saved Records")
+    print("3 - Exit")
+
+    choice = input("Enter your choice: ")
+
+    if choice == "1":
+        # Add Student Record
+        name = input("Enter student name: ")
+        grade = input("Enter student grade: ")
+
+        try:
+            with open("students.txt", "a") as file:
+                file.write(name + "," + grade + "\n")
+
+            print("Record saved successfully!")
+
+        except Exception as e:
+            print("Error saving record:", e)
+
+    elif choice == "2":
+        # View Saved Records
+        try:
+            with open("students.txt", "r") as file:
+                records = file.readlines()
+
+                if len(records) == 0:
+                    print("No records found yet.")
+                else:
+                    print("\n===== Saved Records =====")
+                    for record in records:
+                        print(record.strip())
+
+        except FileNotFoundError:
+            print("No records found yet.")
+
+    elif choice == "3":
+        # Exit Program
+        print("Exiting program...")
+        break
+
+    else:
+        print("Invalid choice. Please select 1, 2, or 3.")
